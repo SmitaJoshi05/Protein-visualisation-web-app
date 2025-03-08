@@ -1,9 +1,9 @@
 # 📦 Streamlit App Starter Kit 
 ```
-⬆️ (Replace above with your app's name)
+⬆️ PROTEIN VISUALISATION WEB-APP
 ```
 
-Description of the app ...
+The Protein Visualization Web-App allows users to upload protein molecule files in XYZ format and customize various visualization parameters. Users can interact with a sidebar containing options to toggle outline, bonds, adjust bond scale, brightness, relative atom scale, and bond shade. The application provides real-time rendering of the molecule based on the selected parameters, allowing users to dynamically explore different visual representations.
 
 ## Demo App
 
