@@ -1,64 +1,29 @@
+from doctest import Example
+import streamlit as st 
+from st_speckmol import spec_plot
+import glob
+st.set_page_config(layout="wide")
 
+st.markdown('''#PROTEIN VISUALIZATION WEB-APP''')
 
-import streamlit as st
-from stmol import showmol
-import py3Dmol
-import requests
-import biotite.structure.io as bsio
+x_files= glob.glob("mol/*.xyz")
+with st.sidebar:
+    ex_xyz= st.selectbox('select a molecule',x_files)
+    f = open(ex_xyz,"r")
+    ex_xyz = f.read()
+#st.write(ex_xyz)
+#res = spec_plot(ex_xyz,wbox_height="500px",wbox_width="800px",scroll=True)
+#features
+with st.sidebar.expander("Parameters",expanded = True):
+    outl = st.checkbox('Outline',value = True)
+    bond = st.checkbox("Bond",value=True)
+    bond_scale = st.slider('Bondscale',min_value = 0.0,max_value=1.0,value=0.8)
+    brightness = st.slider('Brightness',min_value=0.0,max_value=1.0,value=0.4)
+    relativeAtomScale = st.slider('RelativeAtomScale',min_value=0.0,max_value=1.0,value=0.64)
+    bondShade = st.slider('BondShade',min_value=0.0,max_value=1.0,value=0.5)
+_PARAMETERS = {'outline':outl,'bondScale':bond_scale,
+               'bonds':bond,'bondShade':bondShade,
+               'brightness':brightness,'relativeAtomScale':relativeAtomScale
 
-#st.set_page_config(layout = 'wide')
-st.sidebar.title('🎈 ESMFold')
-st.sidebar.write('[*ESMFold*](https://esmatlas.com/about) is an end-to-end single sequence protein structure predictor based on the ESM-2 language model. For more information, read the [research article](https://www.biorxiv.org/content/10.1101/2022.07.20.500902v2) and the [news article](https://www.nature.com/articles/d41586-022-03539-1) published in *Nature*.')
-
-# stmol
-def render_mol(pdb):
-    pdbview = py3Dmol.view()
-    pdbview.addModel(pdb,'pdb')
-    pdbview.setStyle({'cartoon':{'color':'spectrum'}})
-    pdbview.setBackgroundColor('white')#('0xeeeeee')
-    pdbview.zoomTo()
-    pdbview.zoom(2, 800)
-    pdbview.spin(True)
-    showmol(pdbview, height = 500,width=800)
-
-# Protein sequence input
-DEFAULT_SEQ = "MGSSHHHHHHSSGLVPRGSHMRGPNPTAASLEASAGPFTVRSFTVSRPSGYGAGTVYYPTNAGGTVGAIAIVPGYTARQSSIKWWGPRLASHGFVVITIDTNSTLDQPSSRSSQQMAALRQVASLNGTSSSPIYGKVDTARMGVMGWSMGGGGSLISAANNPSLKAAAPQAPWDSSTNFSSVTVPTLIFACENDSIAPVNSSALPIYDSMSRNAKQFLEINGGSHSCANSGNSNQALIGKKGVAWMKRFMDNDTRYSTFACENPNSTRVSDFRTANCSLEDPAANKARKEAELAAATAEQ"
-txt = st.sidebar.text_area('Input sequence', DEFAULT_SEQ, height=275)
-
-# ESMfold
-def update(sequence=txt):
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
-    response = requests.post('https://api.esmatlas.com/foldSequence/v1/pdb/', headers=headers, data=sequence)
-    name = sequence[:3] + sequence[-3:]
-    pdb_string = response.content.decode('utf-8')
-
-    with open('predicted.pdb', 'w') as f:
-        f.write(pdb_string)
-
-    struct = bsio.load_structure('predicted.pdb', extra_fields=["b_factor"])
-    b_value = round(struct.b_factor.mean(), 4)
-
-    # Display protein structure
-    st.subheader('Visualization of predicted protein structure')
-    render_mol(pdb_string)
-
-    # plDDT value is stored in the B-factor field
-    st.subheader('plDDT')
-    st.write('plDDT is a per-residue estimate of the confidence in prediction on a scale from 0-100.')
-    st.info(f'plDDT: {b_value}')
-
-    st.download_button(
-        label="Download PDB",
-        data=pdb_string,
-        file_name='predicted.pdb',
-        mime='text/plain',
-    )
-
-predict = st.sidebar.button('Predict', on_click=update)
-
-
-if not predict:
-    st.warning('👈 Enter protein sequence data!')
-
+}
+res = spec_plot(ex_xyz,wbox_height="500px",wbox_width="800px",scroll=True,_PARAMETERS = _PARAMETERS  )
