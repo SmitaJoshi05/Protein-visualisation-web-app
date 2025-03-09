@@ -19,7 +19,10 @@ This is filler text, please replace this with text for this section.
 
 ## Further Reading
 
-This is filler text, please replace this with a explanatory text about further relevant resources for this repo
-- Resource 1
-- Resource 2
-- Resource 3
+The implementation of the Protein Visualization Web-App utilizes Streamlit for building the web interface and ‘st_speckmol’ library for molecular visualization. The code is structured into modules for handling file input, configuring visualization parameters, and rendering the molecule.
+Key components of the implementation include:
+i.	Integration with Streamlit's sidebar for user interaction.
+ii.	Utilization of st_speckmol's ‘spec_plot’ function for molecule visualization.
+iii.	Parsing and processing of XYZ format molecule files.
+iv.	Dynamic updating of the visualization based on user-selected parameters.
+
